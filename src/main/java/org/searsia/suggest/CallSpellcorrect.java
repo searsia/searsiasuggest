@@ -45,7 +45,7 @@ public class CallSpellcorrect {
         JSONObject json = new JSONObject();
         JSONArray hits = new JSONArray();
         if (result != null) {
-            hits.put(new JSONObject().put("title", result));
+            hits.put(new JSONObject().put("title", result).put("tags", "#small #suggestion"));
         }
         json.put("hits", hits);
         return json.toString();

@@ -55,7 +55,7 @@ public class CallAutocomplete {
         JSONObject json = new JSONObject();
         JSONArray hits = new JSONArray();
         for (String suggestion: result) {
-            hits.put(new JSONObject().put("title", suggestion));
+            hits.put(new JSONObject().put("title", suggestion).put("tags", "#small #suggestion"));
         }
         json.put("hits", hits);
         return json.toString();
