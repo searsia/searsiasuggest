@@ -5,11 +5,15 @@ import sys
 
 URL = 'http://localhost:8088/suggestions/autocomplete'
 
-def normalize_query(query):
-    lower = query.lower()
-    normal = re.sub(r"[^0-9a-z ]", " ", lower)
-    return re.sub(r" +", " ", normal)
+def printf(format, *args):
+    sys.stdout.write(format % args)
 
+
+def normalize_query(query):
+    query = query.lower()
+    query = re.sub(r"[^0-9a-z ]", " ", query)
+    query = re.sub(r" +", " ", query)
+    return re.sub(r"^ | $", "", query)
 
 def reciprocal_rank(query, json): 
     relevant = normalize_query(query)
@@ -24,12 +28,17 @@ def reciprocal_rank(query, json):
     return 0;
 
 
+def returned_of_100(json):
+    return len(json['hits']) / 100.0
+
+
 if (len(sys.argv) != 2):
     sys.stderr.write ("Usage: python evaluate.py testdata.txt\n")
     sys.exit(1)
 
 with open(sys.argv[1]) as testdata:
-    rr_total = [0.0, 0.0, 0.0, 0.0, 0.0]
+    recip_rank_total  = [0.0, 0.0, 0.0, 0.0, 0.0]
+    returned100_total = [0.0, 0.0, 0.0, 0.0, 0.0] 
     query_total = 0;
     for line in testdata:
         query_total += 1
@@ -41,13 +50,14 @@ with open(sys.argv[1]) as testdata:
             param = { 'q': prefix }
             response = requests.get(URL, params=param)
             rr = reciprocal_rank(query, response.json())
-            rr_total[length - 1] += rr
+            recip_rank_total[length - 1] += rr
+            returned100_total[length - 1] += returned_of_100(response.json())
             print rr,
         print
 
 
 print
 print "Mean Reciprocal Rank for", query_total, "queries:"
-print "Prefix  MRR"
+print "Prefix  MRR       Returned of 100"
 for length in range(1, 6):
-    print "  ", length, "  ", rr_total[length - 1] / query_total 
+    printf("   %d    %1.4f    %1.4f\n", length, recip_rank_total[length - 1] / query_total, returned100_total[length - 1] / query_total)
