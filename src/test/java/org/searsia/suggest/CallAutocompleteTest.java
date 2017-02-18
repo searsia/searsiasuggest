@@ -68,7 +68,7 @@ public class CallAutocompleteTest {
         String entity = (String) response.getEntity();
         JSONObject json = new JSONObject(entity);
         JSONArray result = json.getJSONArray("hits");
-        Assert.assertEquals(7, result.length());
+        Assert.assertTrue(result.length() > 5);
     }
 
     @Test

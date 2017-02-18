@@ -30,6 +30,8 @@ import java.util.Map;
  */
 public class SuggestIndex {
 
+    private static boolean EVAL = true;  // set this to true autocomplete evaluation (-Dmaven.test.skip=true)
+
     private List<String> suggestionList;
     private List<String> normalizedList;
     private List<Double> scoreList;
@@ -90,7 +92,7 @@ public class SuggestIndex {
             if (newc != null) { 
                 c = newc;
             } 
-            if (c == ' ' || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z')) { 
+            if (EVAL || c == ' ' || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z')) {
                 builder.append(c);     
             }
         }
@@ -122,16 +124,19 @@ public class SuggestIndex {
         }
     }
 
-    private void prepareData(String query, Double score, String strategy) {
-        this.suggestionList.add(query);
-        this.normalizedList.add(normalizeQuery(query));
-        if (strategy == null || !strategy.equals("autocomplete")) { // scores and uniGrams not needed for autocomplete only
+    private void prepareData(String query, Double score) {
+    	this.normalizedList.add(normalizeQuery(query));
+        if (!EVAL) { // minimal data usage for evaluation
+            this.suggestionList.add(query);
             this.scoreList.add(score);
             addToUniGrams(query, score); // constant 1.0d, gives quite different results!
         }
     }
     
     private void readSuggestionFile(String fileString) throws IOException {
+    	if (EVAL) {
+    		System.err.println("Warning: Compiled in eval-only mode.");
+    	}
         BufferedReader reader = new BufferedReader(new FileReader(fileString)); 
         long invalid = 0;
         try {
@@ -147,7 +152,7 @@ public class SuggestIndex {
                     prevScore = thisScore;
                     String query = fields[1];
                     if (isValidUnicode(query)) {
-                    	prepareData(query, thisScore, null);
+                    	prepareData(query, thisScore);
                     } else {
                         invalid++;
                     }
@@ -190,8 +195,12 @@ public class SuggestIndex {
         int nrFound = 0;
         for (String completion: this.normalizedList) {
             if (completion.startsWith(queryString)) {
-                result.add(this.suggestionList.get(nrSearched));
-                if (++nrFound >= 7) { break; }
+            	if (EVAL) {
+                    result.add(completion);
+            	} else {
+                    result.add(this.suggestionList.get(nrSearched));
+            	}
+                if (++nrFound >= 10) { break; }
             }
             nrSearched++;
         }
@@ -311,7 +320,7 @@ public class SuggestIndex {
      * @return size
      */
     public long size() {
-        return this.suggestionList.size();
+        return this.normalizedList.size();
     }
     
     
