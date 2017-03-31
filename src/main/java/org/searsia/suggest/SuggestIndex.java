@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class SuggestIndex {
 
-    private static boolean EVAL = true;  // set this to true autocomplete evaluation (-Dmaven.test.skip=true)
+    private static boolean EVAL = false;  // set this to true for autocomplete evaluation (-Dmaven.test.skip=true)
 
     private List<String> suggestionList;
     private List<String> normalizedList;

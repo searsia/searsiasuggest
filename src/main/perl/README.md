@@ -1,7 +1,7 @@
 Collecting Data for Query Suggestions
 =====================================
 
-    "a poor person's approach"
+> "a poor person's approach"
 
 ## 1. Crawl the web
 
@@ -33,5 +33,5 @@ evil, add `-e robots=off`. Kill the process once you have enough pages.
 
 ## 5. Run the suggestions engine
 
-    java -jar searsiasuggest.jar -f anchors_count.txt
+    java -jar target/searsiasuggest.jar -f anchors_count.txt
 
