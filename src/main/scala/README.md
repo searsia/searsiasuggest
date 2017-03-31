@@ -50,6 +50,12 @@ And run with:
 
     spark-submit target/scala-2.10/AnchorExtract-assembly-1.0.jar MyCrawl/* MyAnchors 
 
+or likely something along the lines of (depending on your infrastructure):
+
+    spark-submit --master yarn --deploy-mode cluster --num-executors 100 \
+    --conf spark.yarn.executor.memoryOverhead=2048 --class org.searsia.AnchorExtract \
+    target/scala-2.10/AnchorExtract-assembly-1.0.jar MyCrawl/* MyAnchors
+
 
 ## 4. Run the suggestions engine
 
