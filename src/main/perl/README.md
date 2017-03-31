@@ -11,7 +11,7 @@ evil, add `-e robots=off`. Kill the process once you have enough pages.
 
     wget --timeout=9 --wait=2 --random-wait --level=inf --html-extension \
     --recursive --span-hosts --domains=SITE.TLD --no-clobber --tries=2 \
-    --user-agent='NAME' --html-extension --restrict -file-names=windows \
+    --user-agent='NAME' --html-extension --restrict-file-names=windows \
     --reject=jpg,js,css,png,gif,doc,docx,jpeg,pdf,mp3,avi,mpeg,txt,ico \
     http://SITE.TLD
 
