@@ -86,14 +86,17 @@ public class SuggestIndex {
     private String normalizeQuery(String query) {
         if (query == null) { return null; }
         StringBuilder builder = new StringBuilder();
+        char c, prevc = ' ';
+        Character newc;
         for(int i = 0; i < query.length(); i++) {
-            char c = Character.toLowerCase(query.charAt(i));
-            Character newc = MAP_NORM.get(c);
+            c = Character.toLowerCase(query.charAt(i));
+            newc = MAP_NORM.get(c);
             if (newc != null) { 
                 c = newc;
-            } 
-            if (EVAL || c == ' ' || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z')) {
+            }
+            if (EVAL || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || ( c == ' ' && prevc != ' ')) {
                 builder.append(c);     
+                prevc = c;
             }
         }
         return builder.toString();

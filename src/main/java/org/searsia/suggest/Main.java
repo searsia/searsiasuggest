@@ -72,6 +72,11 @@ public class Main {
         String myFile = null;
         String myUrl = defaultUrl;
 
+        String encoding = System.getProperties().getProperty("file.encoding");
+        if (encoding == null || !encoding.equals("UTF-8")) {
+            System.err.println("Warning: Unknown encoding. Set JVM encoding with '-Dfile.encoding=UTF-8'");
+        }
+        
         CommandLine cmd = getOptions(args);
         myFile  = cmd.getOptionValue("f");
         if (cmd.hasOption("u")) {
@@ -90,7 +95,7 @@ public class Main {
     	}
     	System.err.println("URL Templates: " + myUrl + "/autocomplete?q={q}");
     	System.err.println("               " + myUrl + "/related?q={q}");
-    	System.err.println("               " + myUrl + "/spellcheck?q={q}");
+    	System.err.println("               " + myUrl + "/spellcorrect?q={q}");
 
         try {
             while(true) {
