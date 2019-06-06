@@ -71,8 +71,10 @@ public class CallAutocomplete {
     }
 
     @GET
-    public Response query(@QueryParam("q") String queryString, @QueryParam("f") String format) {
-        List<String> result = index.autocomplete(queryString);
+    public Response query(@QueryParam("q") String queryString, 
+    		              @QueryParam("f") String format,
+    		              @QueryParam("t") String tag) {
+        List<String> result = index.autocomplete(queryString, tag);
         if (format != null && format.equals("opensearch")) {
             return Response.ok(jsonOpensearch(queryString, result))
                     .header("Access-Control-Allow-Origin", "*")

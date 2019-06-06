@@ -34,6 +34,7 @@ public class SuggestIndex {
 
     private List<String> suggestionList;
     private List<String> normalizedList;
+    private List<String> tagList;
     private List<Double> scoreList;
     private Map<String, Double> unigrams;
     private long sumOfUnigramF;
@@ -77,6 +78,7 @@ public class SuggestIndex {
     public SuggestIndex(String fileName) throws IOException {
         this.suggestionList = new ArrayList<String>();
         this.normalizedList = new ArrayList<String>();
+        this.tagList        = new ArrayList<String>();
         this.scoreList      = new ArrayList<Double>();
         this.unigrams       = new HashMap<String, Double>();
         this.sumOfUnigramF  = 1l;
@@ -127,10 +129,11 @@ public class SuggestIndex {
         }
     }
 
-    private void prepareData(String query, Double score) {
+    private void prepareData(String query, String tag, Double score) {
     	this.normalizedList.add(normalizeQuery(query));
         if (!EVAL) { // minimal data usage for evaluation
             this.suggestionList.add(query);
+            this.tagList.add(tag);
             this.scoreList.add(score);
             addToUniGrams(query, score); // constant 1.0d, gives quite different results!
         }
@@ -148,14 +151,18 @@ public class SuggestIndex {
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#") && line.length() > 0) {
                     String[] fields = line.split("\t");
-                    Double thisScore = new Double(fields[0]);
+                    Double thisScore = Double.parseDouble(fields[0]);
                     if (prevScore != null && prevScore < thisScore) {
                         throw new IOException("Scores must be ordered from high to low.");
                     }
                     prevScore = thisScore;
                     String query = fields[1];
+                    String tag = "";
+                    if (fields.length > 2) {
+                    	tag = fields[2];
+                    }
                     if (isValidUnicode(query)) {
-                    	prepareData(query, thisScore);
+                    	prepareData(query, tag, thisScore);
                     } else {
                         invalid++;
                     }
@@ -190,20 +197,26 @@ public class SuggestIndex {
      * @param query
      * @return list of query suggestions
      */
-    public List<String> autocomplete(String query) {
+    public List<String> autocomplete(String query, String tag) {
         List<String> result = new ArrayList<String>();
         if (query == null) { return result; }
+        if (tag != null && tag.length() > 1) { 
+        	tag = tag.substring(0, 1);
+        }
         String queryString = normalizeQuery(query);
         int nrSearched = 0;
         int nrFound = 0;
         for (String completion: this.normalizedList) {
             if (completion.startsWith(queryString)) {
-            	if (EVAL) {
-                    result.add(completion);
-            	} else {
-                    result.add(this.suggestionList.get(nrSearched));
+            	String foundTag = this.tagList.get(nrSearched);
+            	if (tag == null || foundTag.contains(tag)) {
+                	if (EVAL) {
+                        result.add(completion);
+                	} else {
+                        result.add(this.suggestionList.get(nrSearched));
+                	}
+                    if (++nrFound >= 10) { break; }            		
             	}
-                if (++nrFound >= 10) { break; }
             }
             nrSearched++;
         }

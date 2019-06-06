@@ -1,0 +1,17 @@
+# Example completion file.
+# Format: Real number <tab> string <tab> category string <tab> url
+# Must be sorted in reverse order on the first column.
+# Category 1st char, e.g. 'v'=video, 'i'=image, 'p'=people, 'n'=news, 'l'=link
+100.1	test results
+50.0	Test Collection Download	l	http://download.searsia
+20.5	collection download
+10.3	test, train and validation set
+10.2	collection help
+10.1	test again	ln	http://test.news
+10.1	help not
+10.0	collections
+7.8	MESA+ News	n
+2.8	MESA+ Events	ip
+0.7	MESA+ Nanolab	vi
+0.5	NOG ÉÉNTJE?	v
+0.2	good results	i	
