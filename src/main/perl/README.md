@@ -13,11 +13,12 @@ evil, add `-e robots=off`. Kill the process once you have enough pages.
     --recursive --span-hosts --domains=SITE.TLD --no-clobber --tries=2 \
     --user-agent='NAME' --html-extension --restrict-file-names=windows \
     --reject=jpg,js,css,png,gif,doc,docx,jpeg,pdf,mp3,avi,mpeg,txt,ico \
+    --no-verbose --no-check-certificate \
     http://SITE.TLD
 
 ## 2. Get anchor text
 
-    find . -name "*.htm*" -exec cat \{\} \; \
+    find . -name "*.htm*" -type f -exec cat \{\} \; \
     | ./anchors1_linebreaks.pl | ./anchors2_extract.pl \
     | ./anchors3_replace.pl  | sort -f >anchors.txt
 

@@ -7,7 +7,8 @@ while(<STDIN>) {
   if (/[\x00-\x08]/) { $prnt = 0; }
   if (/[\x11-\x1F]/) { $prnt = 0; }
   if (/[^ \t]{26,}/) { $prnt = 0; }
-
+  if (length($_) < 3) { $prnt = 0; }
+ 
   if ($prnt) {
     s/^(([^ ]+ ){10}).+$/$1/; # at most 10 terms
     s/[^A-Za-z0-9]+\n$/\n/;
