@@ -87,15 +87,16 @@ public class Main {
         HttpServer server = null;
     	try {
             index = new SuggestIndex(myFile);
+            System.err.println("Searsia Suggest Version 0.1.2");
             System.err.println("Created  index of " + index.size() + " suggestions");
             server = GrizzlyHttpServerFactory.createHttpServer(URI.create(myUrl), new SuggestApp(index));
     	} catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
     	}
-    	System.err.println("URL Templates: " + myUrl + "/autocomplete?q={q}");
-    	System.err.println("               " + myUrl + "/related?q={q}");
-    	System.err.println("               " + myUrl + "/spellcorrect?q={q}");
+    	System.err.println("URL Templates: " + myUrl + "/autocomplete?q={searchTerms}&t={tag}&f={format}");
+    	System.err.println("               " + myUrl + "/related?q={searchTerms}");
+    	System.err.println("               " + myUrl + "/spellcorrect?q={searchTerms}");
 
         try {
             while(true) {
