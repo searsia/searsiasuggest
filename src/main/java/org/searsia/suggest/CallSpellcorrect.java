@@ -35,10 +35,21 @@ import org.json.JSONObject;
 @Path("spellcorrect")
 public class CallSpellcorrect {
 
-    private SuggestIndex index;
+    public static final String getRequest = "/spellcorrect?q={searchTerms}";
+	private SuggestIndex index;
+    private JSONObject resource;
     
-    public CallSpellcorrect(SuggestIndex index) throws IOException {
+    
+    public CallSpellcorrect(SuggestIndex index, String myProxyUrl) throws IOException {
         this.index = index;
+        this.resource = new JSONObject();
+        this.resource.put("id", "spellcorrect");
+        this.resource.put("name", "Did you mean: ");
+        this.resource.put("mimetype", "application/searsia+json");
+        if (myProxyUrl != null) {
+            this.resource.put("apitemplate", myProxyUrl + getRequest);
+            this.resource.put("directaccess", "yes");
+        }
     }
 
     private String jsonSearsia(String result) {
@@ -48,6 +59,7 @@ public class CallSpellcorrect {
             hits.put(new JSONObject().put("title", result).put("tags", "#small #suggestion"));
         }
         json.put("hits", hits);
+        json.put("resource", this.resource);
         return json.toString();
     }
 

@@ -36,10 +36,20 @@ import org.json.JSONObject;
 @Path("related")
 public class CallRelated {
 
+	public static final String getRequest = "/related?q={searchTerms}";
     private SuggestIndex index;
+    private JSONObject resource;
     
-    public CallRelated(SuggestIndex index) throws IOException {
+    public CallRelated(SuggestIndex index, String myProxyUrl) throws IOException {
         this.index = index;
+        this.resource = new JSONObject();
+        this.resource.put("id", "related");
+        this.resource.put("name", "Related Searches: ");
+        this.resource.put("mimetype", "application/searsia+json");
+        if (myProxyUrl != null) {
+            this.resource.put("apitemplate", myProxyUrl + getRequest);
+            this.resource.put("directaccess", "yes");
+        }
     }
 
     private String jsonSearsia(List<String> result) {
@@ -49,6 +59,7 @@ public class CallRelated {
             hits.put(new JSONObject().put("title", suggestion).put("tags", "#small #suggestion"));
         }
         json.put("hits", hits);
+        json.put("resource",  this.resource);
         return json.toString();
     }
 

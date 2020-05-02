@@ -51,6 +51,7 @@ public class Main {
     	Options options = new Options();
         options.addOption("f", "file", true,  "File with suggestions.");
         options.addOption("u", "url",  true,  "Set url of web service endpoint. (default: '" + defaultUrl + "')");
+        options.addOption("p", "proxy", true, "Set reverse proxy url of web service endpoint.");
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
         try {
@@ -69,8 +70,9 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        String myFile = null;
-        String myUrl = defaultUrl;
+        String myFile  = null;
+        String myUrl   = defaultUrl; // local url
+        String myProxy = null;       // optionally: reverse proxy url
 
         String encoding = System.getProperties().getProperty("file.encoding");
         if (encoding == null || !encoding.equals("UTF-8")) {
@@ -82,21 +84,24 @@ public class Main {
         if (cmd.hasOption("u")) {
             myUrl  = cmd.getOptionValue("u");
         }
+        if (cmd.hasOption("p")) {
+        	myProxy = cmd.getOptionValue("p");
+        }
         
         SuggestIndex index = null;
         HttpServer server = null;
     	try {
             index = new SuggestIndex(myFile);
-            System.err.println("Searsia Suggest Version 0.1.2");
-            System.err.println("Created  index of " + index.size() + " suggestions");
-            server = GrizzlyHttpServerFactory.createHttpServer(URI.create(myUrl), new SuggestApp(index));
+            System.err.println("Searsia Suggest Version 0.1.3");
+            System.err.println("Created index of " + index.size() + " suggestions");
+            server = GrizzlyHttpServerFactory.createHttpServer(URI.create(myUrl), new SuggestApp(index, myProxy));
     	} catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
     	}
     	System.err.println("URL Templates: " + myUrl + "/autocomplete?q={searchTerms}&t={tag}&f={format}");
-    	System.err.println("               " + myUrl + "/related?q={searchTerms}");
-    	System.err.println("               " + myUrl + "/spellcorrect?q={searchTerms}");
+    	System.err.println("               " + myUrl + CallRelated.getRequest);
+    	System.err.println("               " + myUrl + CallSpellcorrect.getRequest);
 
         try {
             while(true) {

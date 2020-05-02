@@ -29,12 +29,12 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class SuggestApp extends ResourceConfig {
 
-    public SuggestApp(SuggestIndex index) throws IOException {
+    public SuggestApp(SuggestIndex index, String myProxyUrl) throws IOException {
         super();
         Logger.getLogger("org.glassfish.grizzly").setLevel(Level.WARNING);
         register(new CallAutocomplete(index));
-        register(new CallRelated(index));
-        register(new CallSpellcorrect(index));
+        register(new CallRelated(index, myProxyUrl));
+        register(new CallSpellcorrect(index, myProxyUrl));
     }
 	
 }

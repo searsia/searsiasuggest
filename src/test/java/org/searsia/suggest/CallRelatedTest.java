@@ -15,6 +15,7 @@ import org.junit.Test;
 public class CallRelatedTest {
 
     private static SuggestIndex index;
+    private static String proxy = null;
     
     @BeforeClass
     public static void setUp() throws Exception {
@@ -24,15 +25,17 @@ public class CallRelatedTest {
     @Test
     public void test() throws IOException {
         String queryString = "results help";
-        CallRelated related = new CallRelated(index);
+        CallRelated related = new CallRelated(index, proxy);
         Response response = related.query(queryString);
         String entity = (String) response.getEntity();
         String contentType = response.getHeaderString("Content-Type");
         JSONObject json = new JSONObject(entity);
         JSONArray result = json.getJSONArray("hits");
+        JSONObject resource = json.getJSONObject("resource");
         Assert.assertEquals("application/searsia+json", contentType);
         Assert.assertEquals("test results", result.getJSONObject(0).get("title"));
         Assert.assertEquals("collection help",  result.getJSONObject(1).get("title"));
+        Assert.assertEquals("related", resource.get("id"));
     }
     
 

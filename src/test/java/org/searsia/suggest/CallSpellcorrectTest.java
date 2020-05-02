@@ -17,6 +17,7 @@ import org.junit.Test;
 
 public class CallSpellcorrectTest {
 
+    private static String proxy = null;
     private static SuggestIndex index;
     
     @BeforeClass
@@ -27,7 +28,7 @@ public class CallSpellcorrectTest {
     @Test
     public void testOk() throws IOException {
         String queryString = "collection";
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         Response response = spellcorrect.query(queryString);
         String entity = (String) response.getEntity();
         String contentType = response.getHeaderString("Content-Type");
@@ -40,18 +41,20 @@ public class CallSpellcorrectTest {
     @Test
     public void testInsertion() throws IOException {
         String queryString = "colection";
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         Response response = spellcorrect.query(queryString);
         String entity = (String) response.getEntity();
         JSONObject json = new JSONObject(entity);
         JSONArray result = json.getJSONArray("hits");
+        JSONObject resource = json.getJSONObject("resource");
         Assert.assertEquals("collection", result.getJSONObject(0).get("title"));
+        Assert.assertEquals("spellcorrect", resource.get("id"));
     }
     
     @Test
     public void testDeletion() throws IOException {
         String queryString = "colllection";
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         Response response = spellcorrect.query(queryString);
         String entity = (String) response.getEntity();
         JSONObject json = new JSONObject(entity);
@@ -62,7 +65,7 @@ public class CallSpellcorrectTest {
     @Test
     public void testSubstitution() throws IOException {
         String queryString = "downloed";
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         Response response = spellcorrect.query(queryString);
         String entity = (String) response.getEntity();
         JSONObject json = new JSONObject(entity);
@@ -73,7 +76,7 @@ public class CallSpellcorrectTest {
     @Test
     public void testPhrase() throws IOException {
         String queryString = "MASA result";
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         Response response = spellcorrect.query(queryString);
         String entity = (String) response.getEntity();
         JSONObject json = new JSONObject(entity);
@@ -93,7 +96,7 @@ public class CallSpellcorrectTest {
     	final String fileString = "/home/databases/Data/anchors_count.txt";
     	SuggestIndex index = new SuggestIndex(fileString);
 
-        CallSpellcorrect spellcorrect = new CallSpellcorrect(index);
+        CallSpellcorrect spellcorrect = new CallSpellcorrect(index, proxy);
         BufferedReader reader = new BufferedReader(new FileReader(fileString)); 
         String line;
         while ((line = reader.readLine()) != null) {
