@@ -92,7 +92,7 @@ public class Main {
         HttpServer server = null;
     	try {
             index = new SuggestIndex(myFile);
-            System.err.println("Searsia Suggest Version 0.1.3");
+            System.err.println("Searsia Suggest Version 0.1.4");
             System.err.println("Created index of " + index.size() + " suggestions");
             server = GrizzlyHttpServerFactory.createHttpServer(URI.create(myUrl), new SuggestApp(index, myProxy));
     	} catch (Exception e) {

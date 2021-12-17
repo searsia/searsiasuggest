@@ -24,17 +24,22 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 /**
  * Searsia Autocomplete application.
- * 
+ *
  * @author Dolf Trieschnigg and Djoerd Hiemstra
  */
 public class SuggestApp extends ResourceConfig {
 
     public SuggestApp(SuggestIndex index, String myProxyUrl) throws IOException {
         super();
-        Logger.getLogger("org.glassfish.grizzly").setLevel(Level.WARNING);
+        Logger.getLogger("").setLevel(Level.SEVERE);
         register(new CallAutocomplete(index));
         register(new CallRelated(index, myProxyUrl));
         register(new CallSpellcorrect(index, myProxyUrl));
+        /* 
+          register gives warnings because we have to register classes
+          instead of objects, in the future, we may have to pass on the 
+          index via an AbstractBinder and a Feature.
+         */
     }
 	
 }
