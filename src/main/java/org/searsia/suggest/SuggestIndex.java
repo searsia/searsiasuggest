@@ -17,8 +17,11 @@
 package org.searsia.suggest;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,7 +146,8 @@ public class SuggestIndex {
     	if (EVAL) {
     		System.err.println("Warning: Compiled in eval-only mode.");
     	}
-        BufferedReader reader = new BufferedReader(new FileReader(fileString)); 
+    	Path path = Paths.get(fileString);
+    	BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
         long invalid = 0;
         try {
             String line;
